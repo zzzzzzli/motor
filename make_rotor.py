@@ -9,7 +9,7 @@ def translation(p1,p2,angle,d):
     trans_vec = [d*m.cos(angle),d*m.sin(angle)]
     return [p+t for (p,t) in zip(p1,trans_vec)],[p+t for (p,t) in zip(p2,trans_vec)]
 
-def rotor_plot(R1,R2,center,d,h,magnet_point,dl):
+def rotor_plot(ax3d,R1,R2,center,d,h,magnet_point,dl):
     alpha = list(np.linspace(0,2*m.pi,1000))
     x1 = [center[0]+R1*m.cos(alp) for alp in alpha]
     y1 = [center[1]+R1*m.sin(alp) for alp in alpha]
@@ -19,8 +19,7 @@ def rotor_plot(R1,R2,center,d,h,magnet_point,dl):
     z2 = 1000*[d/2+h]
     z3 = [-z for z in z1]
     z4 = [-z for z in z2]
-    fig = plt.figure()
-    ax3d = Axes3D(fig)
+    
     ax3d.set_xlabel("X axis")
     ax3d.set_ylabel("Y axis")
     ax3d.set_zlabel("Z axis")
@@ -66,10 +65,9 @@ def rotor_plot(R1,R2,center,d,h,magnet_point,dl):
         ax3d.plot(hu1x,hu1y,z4[0:100],'b-')
         ax3d.plot(hu2x,hu2y,z3[0:100],'b-')
         ax3d.plot(hu2x,hu2y,z4[0:100],'b-')
-
 #    for dle in dl:
 #        ax3d.plot([0,dle[0]],[0,dle[1]],[z1[0],z1[0]],'k--')
-    return ax3d,fig
+
 def find_point(p1,p2,R):
     if abs(p1[0] - p2[0]) < 1e-10:
         y1 = m.sqrt(R**2-p1[0]**2)
@@ -160,13 +158,13 @@ def if_in_all(p,magnet_point,R1,R2):
             break
     return IFIN
 
-def test_theta_(magnet_point,R1,R2):
+def test_theta_(magnet_point,R1,R2,D,h):
 #    test theta_()
     R = list(np.linspace(R1,R2,100))
     th = [theta_(r,magnet_point[4][0],magnet_point[4][1],R1,R2) for r in R]
     x = [r*m.cos(t) for (r,t) in zip(R,th)]
     y = [r*m.sin(t) for (r,t) in zip(R,th)]
-    z = delta_D/2+magnet_h
+    z = D/2+h
     plt.plot(x,y,z,'o-')
 
 
@@ -199,8 +197,8 @@ def test_if_in1(ax3d,magnet_point,R1,R2):
     ax3d.plot(P2[0],P2[1],P2[2],'g.',alpha=0.5)
     ax3d.plot(P3[0],P3[1],P3[2],'y.',alpha=0.25)
 
-def test_if_in2(ax3d,magnet_point,R1,R2):
-#    test if_in() #2
+def test_if_in2(ax3d,magnet_point,R1,R2,D,h):
+    #test if_in() #2
     P1=[[],[],[]]
     P2=[[],[],[]]
     P3=[[],[],[]]
@@ -222,7 +220,7 @@ def test_if_in2(ax3d,magnet_point,R1,R2):
             P3[1].append(y)
             P3[2].append(z)
             
-    for z in [-delta_D/2-magnet_h,-delta_D/2,delta_D/2,delta_D/2+magnet_h]:
+    for z in [-D/2-h,-D/2,D/2,D/2+h]:
         for i in range(100):
             x = 18*random.random()-9
             y = 18*random.random()-9
@@ -261,23 +259,3 @@ def test_if_in2(ax3d,magnet_point,R1,R2):
     ax3d.plot(P1[0],P1[1],P1[2],'r.',alpha=1)
     ax3d.plot(P2[0],P2[1],P2[2],'g.',alpha=0.5)
     ax3d.plot(P3[0],P3[1],P3[2],'y.',alpha=0.25)
-
-
-pn = 4
-p_theta = 2*m.pi/pn;
-d = 1
-R1 = 5
-R2 = 8#R1*m.sqrt(3)
-delta_D=1
-magnet_h=1.5
-
-print('磁极内径：'+str(R1)+'mm')
-print('磁极外径：'+str(R2)+'mm')
-print('气隙宽度：'+str(delta_D)+'mm')
-print('磁极厚度：'+str(magnet_h)+'mm')
-print('磁极间距：'+str(2*d)+'mm')
-
-magnet_point,dash_line = rotor_construction(pn,R1,R2,p_theta,delta_D,d,magnet_h)
-ax3d,fig = rotor_plot(R1,R2,[0,0,0],delta_D,magnet_h,magnet_point,dash_line)
-#test_if_in2(ax3d,magnet_point,R1,R2)
-plt.show()
