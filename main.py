@@ -24,10 +24,10 @@ ax3d = Axes3D(fig)
 #magnet_point,dash_line = mr.rotor_construction(pn,R1,R2,p_theta,delta_D,d,magnet_h)
 #mr.rotor_plot(ax3d,R1,R2,[0,0,0],delta_D,magnet_h,magnet_point,dash_line)
 #mr.test_if_in2(ax3d,magnet_point,R1,R2,delta_D,magnet_h)
-position,element = gs.cubic_space(-5,5,4,-5,5,4,-5,5,4)
-gs.space_plot(ax3d,position,element)
-
-
+position,cubics = gs.cubics_space(-5,5,5,-5,5,5,-5,5,5)
+#gs.cubic_space_plot(ax3d,position,cubics)
+tetrahedron = gs.tetrahedron_space(cubics)
+#gs.tetrahedron_space_plot(ax3d,position,tetrahedron)
 
 
 plt.show()
